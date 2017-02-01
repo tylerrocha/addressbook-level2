@@ -32,7 +32,7 @@ public class Main {
     private List<? extends ReadOnlyPerson> lastShownList = Collections.emptyList();
 
 
-    public static void main(String... launchArgs){
+    public static void main(String... launchArgs) {
         new Main().run(launchArgs);
     }
 
