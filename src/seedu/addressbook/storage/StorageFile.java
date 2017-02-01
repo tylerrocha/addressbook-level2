@@ -50,6 +50,15 @@ public class StorageFile {
             super(message);
         }
     }
+    
+    /**
+     * Signals that the storage file may have been deleted or moved while the program is running.
+     */
+    public static class FileNoLongerExistsException extends Exception {
+        public FileNoLongerExistsException(String message) {
+            super(message);
+        }
+    }
 
     private final JAXBContext jaxbContext;
 
@@ -91,7 +100,7 @@ public class StorageFile {
      *
      * @throws StorageOperationException if there were errors converting and/or storing data to file.
      */
-    public void save(AddressBook addressBook) throws StorageOperationException {
+    public void save(AddressBook addressBook) throws StorageOperationException, FileNoLongerExistsException {
 
         /* Note: Note the 'try with resource' statement below.
          * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
@@ -104,11 +113,13 @@ public class StorageFile {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(toSave, fileWriter);
 
+        } catch (FileNotFoundException e) {
+        	throw new FileNoLongerExistsException("File no longer exists");
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);
         } catch (JAXBException jaxbe) {
             throw new StorageOperationException("Error converting address book into storage format");
-        }
+        } 
     }
 
     /**
@@ -116,7 +127,7 @@ public class StorageFile {
      *
      * @throws StorageOperationException if there were errors reading and/or converting data from file.
      */
-    public AddressBook load() throws StorageOperationException {
+    public AddressBook load() throws StorageOperationException, FileNoLongerExistsException {
         try (final Reader fileReader =
                      new BufferedReader(new FileReader(path.toFile()))) {
 
