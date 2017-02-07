@@ -8,18 +8,18 @@ public class Contact {
     private boolean isPrivate;
 	
     public Contact(String value, boolean isPrivate, String messageContactConstraints, String validationRegex) throws IllegalValueException {
-        String trimmedAddress = value.trim();
+        String trimmedValue = value.trim();
         this.isPrivate = isPrivate;
-        if (!isValidAddress(trimmedAddress, validationRegex)) {
+        if (!isValidContact(trimmedValue, validationRegex)) {
             throw new IllegalValueException(messageContactConstraints);
         }
-        this.value = trimmedAddress;
+        this.value = trimmedValue;
     }
     
     /**
      * Returns true if a given string is a valid person email.
      */
-    public static boolean isValidAddress(String test, String validationRegex) {
+    public static boolean isValidContact(String test, String validationRegex) {
         return test.matches(validationRegex);
     }
 
